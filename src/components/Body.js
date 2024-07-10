@@ -3,6 +3,7 @@ import RestaurantCard from "./RestaurantCards";
 import{ useEffect, useState } from "react";
 import Shimmer from "./shimmer";
 import { Link } from "react-router-dom";
+import useOnlineStatus from "../utils/useOnlineStatus";
 
 const Body = () => {
  
@@ -12,6 +13,7 @@ const Body = () => {
   const [filteredRestaurant, setFilteredRestaurant]= useState([]);
 
   const [searchText, setSearchText] = useState("");
+  console.log(listOfRestaurant);
 
   useEffect(()=> {
     fetchData();
@@ -29,19 +31,26 @@ const Body = () => {
     setFilteredRestaurant(json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
 
   };
-// conditinal rendering
+  //check online status
+  const onlineStatus = useOnlineStatus();
+  if(onlineStatus === false) {
+    return (
+      <h1>Looks like you are offline. Please check your internet connection!</h1>
+    )
+  }
+// conditional rendering
     return listOfRestaurant.length === 0 ? (
     <Shimmer/> )
     :(
       <div className="body">
-        <div className="filter"> 
-        <div className="search">
-          <input type="text" className="search-box" value={searchText} onChange={
+        <div className="flex  "> 
+        <div className="">
+          <input type="text" className=" m-2 border border-solid border-black" value={searchText} onChange={
             (e) => {
               setSearchText(e.target.value);
             }
           }/> 
-          <button className="search-btn" 
+          <button className="m-4" 
           onClick={ () => 
             {
              const filteredRestaurant = listOfRestaurant.filter( 
@@ -67,14 +76,13 @@ const Body = () => {
 
         </button>
         </div>
-        <div className="res-container">
+        <div className="flex flex-wrap m-2 p-2">
           {
             filteredRestaurant.map((restaurant) => (
               <Link key= {restaurant.info.id}
                to={"/restaurant/" + restaurant.info.id} > 
               <RestaurantCard resData={restaurant}/>
-              </Link>
-              
+              </Link>           
   
             ))}
     
