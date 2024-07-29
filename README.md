@@ -1,1 +1,1 @@
-# namaste reat training
+# namaste React Training
